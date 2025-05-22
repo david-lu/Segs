@@ -32,6 +32,8 @@ def main(cfg):
     img_dir = cfg.imgs_dir
     depth_dir = cfg.depths_dir
 
+    print('DIR', img_dir, depth_dir)
+
     imgs = read_imgs_from_path(img_dir)
 
     depth_paths = sorted(glob(os.path.join(depth_dir, "*.png"))) + sorted(

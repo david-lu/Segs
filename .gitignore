@@ -1,3 +1,8 @@
 .DS_Store
 *.log
 __pycache__/
+data/
+.idea/
+models/
+preproc/checkpoints/
+sam2/checkpoints/

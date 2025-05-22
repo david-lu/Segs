@@ -1,0 +1,7 @@
+python core/utils/run_inference.py --video_path='data/cinderella_1038.mkv' --gpus 0 1 2 3 --depths --tracks --dinos --e
+python core/utils/run_inference.py --video_path 'data/cinderella_1038.mkv' --motin_seg_dir 'data/moseg_output' --config_file 'configs/example_train.yaml' --gpus 0 1 2 3 --motion_seg_infer --e
+python core/utils/run_inference.py --video_path 'data/cinderella_1038.mkv' --sam2dir 'data/moset_results' --motin_seg_dir 'data/moseg_output' --gpus 0 1 2 3 --sam2 --e
+
+python core/utils/run_inference.py --data_dir ./data --gpus 0 1 2 3 --depths --tracks --dinos --e
+python core/utils/run_inference.py --data_dir ./data --motin_seg_dir ./result/moseg --config_file ./configs/example_train.yaml --gpus 0 1 2 3 --motion_seg_infer --e
+python core/utils/run_inference.py --data_dir ./data --sam2dir ./result/sam2 --motin_seg_dir ./result/moseg --gpus 0 1 2 3 --sam2 --e

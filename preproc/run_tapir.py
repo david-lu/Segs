@@ -46,6 +46,8 @@ def main():
     parser.add_argument(
         "--model_type", type=str, choices=["tapir", "bootstapir"], help="model type"
     )
+
+    print('DEVOICE', torch.device("cuda" if torch.cuda.is_available() else "cpu"))
     parser.add_argument(
         "--ckpt_dir",
         type=str,
@@ -85,7 +87,7 @@ def main():
     ckpt_path = os.path.join(args.ckpt_dir, ckpt_file)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = tapir_model.TAPIR(pyramid_level=1)
-    model.load_state_dict(torch.load(ckpt_path))
+    model.load_state_dict(torch.load(ckpt_path, map_location=device))
     model = model.to(device)
 
     resize_height = args.resize_height

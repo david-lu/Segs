@@ -4,6 +4,21 @@ from concurrent.futures import ProcessPoolExecutor
 
 import argparse
 import cv2
+import sys
+
+def in_venv():
+    print('IS IN VENV')
+    return (
+        hasattr(sys, 'real_prefix')  # legacy virtualenv
+        or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)  # venv
+        or os.environ.get("VIRTUAL_ENV") is not None
+    )
+
+def get_python_path(current_work_dir):
+    if in_venv():
+        return f"/bin/bash -c 'source {current_work_dir}/.venv/bin/activate' && python "
+    else:
+        return 'python'
 
 def resize_images(input_dir, output_dir):    
     valid_exts = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
@@ -112,7 +127,8 @@ def main(
             # extract DINO feature
             if args.dinos:
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/core/utils/dino_feat.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/core/utils/dino_feat.py "
                     f"--image_dir {img_dir} "
                     f"--step {args.step} "
                 )
@@ -123,7 +139,8 @@ def main(
                 sequence_dir = os.path.join(data_dir, img_name)
 
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/core/utils/cal_dynamic_mask.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/core/utils/cal_dynamic_mask.py "
                     f"--data_dir {sequence_dir} --dataset {dataset} "
                 )
                 exe.submit(subprocess.call, cmd, shell=True)                
@@ -136,7 +153,8 @@ def main(
                 depth_dir = os.path.join(data_dir, depth_name, img_name)
             if args.depths:
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/core/utils/run_depth.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/core/utils/run_depth.py "
                     f"--img_dir {img_dir} --out_raw_dir {depth_dir} "
                     f"--step {args.step} "
                     f"--model {depth_model}"
@@ -151,13 +169,15 @@ def main(
 
             if args.tracks and track_model == "cotracker":
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/core/utils/cotracker.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/core/utils/cotracker.py "
                     f"--imgs_dir {img_dir} --save_dir {track_dir} "
                 )
                 exe.submit(subprocess.call, cmd, shell=True)
             elif args.tracks and track_model == "bootstapir":
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/preproc/run_tapir.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/preproc/run_tapir.py "
                     f"--model_type bootstapir "
                     f"--image_dir {img_dir} "
                     f"--out_dir {track_dir} "
@@ -169,7 +189,8 @@ def main(
             # clean preprocess data
             if args.clean:
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/core/utils/clean_data.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/core/utils/clean_data.py "
                     f"--data_dir {img_dir} "
                 )
                 if waymo:
@@ -187,7 +208,8 @@ def main(
             motin_seg_dir = args.motin_seg_dir
             if args.motion_seg_infer:
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/inference.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/inference.py "
                     f"--imgs_dir {img_dir} --save_dir {motin_seg_dir} "
                     f"--depths_dir {depth_dir} --track_dir {track_dir} "
                     f"--step {args.step} "
@@ -202,7 +224,8 @@ def main(
             if args.sam2:
                 dynamic_dir = os.path.join(motin_seg_dir, img_name)
                 cmd = (
-                    f"CUDA_VISIBLE_DEVICES={dev_id} python {current_work_dir}/sam2/run_sam2.py "
+                    f"CUDA_VISIBLE_DEVICES={dev_id} "
+                    f"{get_python_path(current_work_dir)} {current_work_dir}/sam2/run_sam2.py "
                     f"--video_dir {img_dir} --dynamic_dir {dynamic_dir} "
                     f"--output_mask_dir {args.sam2dir} "
                     f"--gt_dir {gt_dir} "

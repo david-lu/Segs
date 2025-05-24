@@ -7,7 +7,6 @@ import cv2
 import sys
 
 def in_venv():
-    print('IS IN VENV')
     return (
         hasattr(sys, 'real_prefix')  # legacy virtualenv
         or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)  # venv

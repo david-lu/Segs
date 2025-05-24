@@ -86,6 +86,7 @@ def main():
     )
     ckpt_path = os.path.join(args.ckpt_dir, ckpt_file)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"TAPIR Using device {device}")
     model = tapir_model.TAPIR(pyramid_level=1)
     model.load_state_dict(torch.load(ckpt_path, map_location=device))
     model = model.to(device)

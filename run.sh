@@ -1,58 +1,51 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# === Function: Resize to max side ===
-resize_to_max() {
-  input="$1"
-  output="$2"
-  max_size="${3:-640}"
+# === Colors ===
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
-  if [ ! -f "$input" ]; then
-    echo "Error: Input file '$input' does not exist."
-    return 1
-  fi
-
-  ffmpeg -y -i "$input" \
-    -vf "scale='if(gt(iw,ih),${max_size},-2)':'if(gt(ih,iw),${max_size},-2)'" \
-    -c:a copy "$output"
-
-  echo "$output"
+# === Function: Print error and exit ===
+die() {
+  echo -e "${RED}Error:${NC} $1" >&2
+  exit 1
 }
 
-# === Inputs ===
-input_video="$1"              # e.g. data/cinderella_1038.mkv
-resized_video="$2"            # e.g. data/cinderella_1038_resized.mp4
+# === Parse arguments ===
+input_video="${1:-}"
+[ -n "$input_video" ] || die "Missing input video. Usage: $0 <input_video>"
+[ -f "$input_video" ] || die "File '$input_video' does not exist."
 
-if [ -z "$input_video" ] || [ -z "$resized_video" ]; then
-  echo "Usage: $0 <input_video> <resized_output_video>"
-  exit 1
-fi
+# === Check dependencies ===
+command -v python >/dev/null 2>&1 || die "'python' not found in PATH."
+[ -f core/utils/run_inference.py ] || die "Missing: core/utils/run_inference.py"
 
-# === Resize video ===
-resize_to_max "$input_video" "$resized_video" 640
-
-# === Run inference using resized video ===
+# === Run inference ===
+echo -e "${YELLOW}Running inference on '$input_video'...${NC}"
 
 python core/utils/run_inference.py \
-  --video_path "$resized_video" \
+  --video_path "$input_video" \
   --gpus 0 1 2 3 \
   --depths \
   --tracks \
   --dinos \
-  --e
+  --e || die "Depth/track/dino inference failed."
 
 python core/utils/run_inference.py \
-  --video_path "$resized_video" \
+  --video_path "$input_video" \
   --motin_seg_dir 'data/moseg_output' \
   --config_file 'configs/example_train.yaml' \
   --gpus 0 1 2 3 \
   --motion_seg_infer \
-  --e
+  --e || die "Motion segmentation inference failed."
 
 python core/utils/run_inference.py \
-  --video_path "$resized_video" \
+  --video_path "$input_video" \
   --sam2dir 'data/moset_results' \
   --motin_seg_dir 'data/moseg_output' \
   --gpus 0 1 2 3 \
   --sam2 \
-  --e
+  --e || die "SAM2 inference failed."
+
+echo -e "${YELLOW}✅ All inference steps completed successfully.${NC}"

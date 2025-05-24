@@ -1,3 +1,26 @@
+# Deinitialize all submodules
+git submodule deinit -f --all
+
+# Remove all submodule metadata
+rm -rf .git/modules/preproc/dinov2
+rm -rf .git/modules/preproc/tapnet
+rm -rf .git/modules/core/eval/davis2017-evaluation
+
+# Optionally remove their working directories (if broken)
+rm -rf preproc/dinov2
+rm -rf preproc/tapnet
+rm -rf core/eval/davis2017-evaluation
+
+
+git submodule deinit -f --all
+git submodule update --init --recursive --force
+
+pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements.txt
+pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+wget -O models/moseg.pth https://huggingface.co/Changearthmore/moseg/resolve/main/moseg.pth
+wget https://storage.googleapis.com/dm-tapnet/bootstap/bootstapir_checkpoint_v2.pt
+
 python core/utils/run_inference.py --video_path='data/cinderella_1038.mkv' --gpus 0 1 2 3 --depths --tracks --dinos --e
 python core/utils/run_inference.py --video_path 'data/cinderella_1038.mkv' --motin_seg_dir 'data/moseg_output' --config_file 'configs/example_train.yaml' --gpus 0 1 2 3 --motion_seg_infer --e
 python core/utils/run_inference.py --video_path 'data/cinderella_1038.mkv' --sam2dir 'data/moset_results' --motin_seg_dir 'data/moseg_output' --gpus 0 1 2 3 --sam2 --e

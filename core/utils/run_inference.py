@@ -62,7 +62,7 @@ def video_to_images(video_path, output_dir, efficiency):
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         
         if efficiency:
-            target_frames = min(total_frames, 100)
+            target_frames = min(total_frames, 150)
             frame_interval = total_frames // target_frames if total_frames > target_frames else 1
         else:
             target_frames = total_frames
@@ -75,7 +75,7 @@ def video_to_images(video_path, output_dir, efficiency):
             ret, frame = cap.read()
             if not ret:
                 break
-            
+
             if (efficiency and frame_count % frame_interval == 0 and saved_frame_count < target_frames) \
                 or (not efficiency and saved_frame_count < target_frames):
                 
@@ -95,6 +95,8 @@ def main(
     gpus = args.gpus
     abs_dir = os.path.dirname(os.path.abspath(__file__))
     current_work_dir = os.path.dirname(os.path.dirname(abs_dir))
+
+    print('args.step', args.step)
     
     stereo = False
     waymo = False
@@ -239,7 +241,7 @@ if __name__ == "__main__":
     parser.add_argument('--gpus', nargs='+', type=int, default=[0], help='GPU ID')
     parser.add_argument('--track_model', type=str, default="bootstapir")
     parser.add_argument("--e", action='store_true',help="efficiency mode")
-    parser.add_argument('--step', type=int,default=10)
+    parser.add_argument('--step', type=int, default=10)
     parser.add_argument('--grid_size', type=int, default=20)
     # data process
     parser.add_argument("--depths", action='store_true')

@@ -47,7 +47,6 @@ def main():
         "--model_type", type=str, choices=["tapir", "bootstapir"], help="model type"
     )
 
-    print('DEVOICE', torch.device("cuda" if torch.cuda.is_available() else "cpu"))
     parser.add_argument(
         "--ckpt_dir",
         type=str,
@@ -87,7 +86,14 @@ def main():
     ckpt_path = os.path.join(args.ckpt_dir, ckpt_file)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"TAPIR Using device {device}")
-    model = tapir_model.TAPIR(pyramid_level=1)
+    model = tapir_model.TAPIR(
+        # pyramid_level=2,
+        num_pips_iter=8,
+        # softmax_temperature=10,
+        # bilinear_interp_with_depthwise_conv=True,
+        # parallelize_query_extraction=True,
+        # use_casual_conv=True,
+    )
     model.load_state_dict(torch.load(ckpt_path, map_location=device))
     model = model.to(device)
 

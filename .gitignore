@@ -5,5 +5,5 @@ data/
 .idea/
 models/
 preproc/checkpoints/
-sam2/checkpoints/
+sam2/checkpoints/*.pt
 sam2/build

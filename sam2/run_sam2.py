@@ -601,8 +601,8 @@ def main(args):
         output_mask_dir = os.path.join(args.output_mask_dir, "initial_preds")
     
     if not args.cal_only:
-        checkpoint = "sam2/checkpoints/sam2_hiera_large.pt"
-        model_cfg = "sam2_hiera_l.yaml"
+        checkpoint = "sam2/checkpoints/sam2.1_hiera_large.pt"
+        model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
         predictor = build_sam2_video_predictor(model_cfg, checkpoint)
         frame_names = sorted([
             os.path.splitext(p)[0]

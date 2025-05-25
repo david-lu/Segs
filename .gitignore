@@ -6,4 +6,6 @@ data/
 models/
 preproc/checkpoints/
 sam2/checkpoints/*.pt
-sam2/build
+sam2/build/
+sam2/dist/
+SAM_2.egg-info/

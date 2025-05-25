@@ -33,7 +33,7 @@ python core/utils/run_inference.py \
   --depths \
   --tracks \
   --dinos \
-  --step 8 \
+  --step 16 \
   --e || die "Depth/track/dino inference failed."
 
 python core/utils/run_inference.py \
@@ -43,8 +43,8 @@ python core/utils/run_inference.py \
   --gpus 0 1 2 3 \
   --motion_seg_infer \
   --e \
-  --step 8 \
-  --grid_size 4 || die "Motion segmentation inference failed."
+  --step 16 \
+  --grid_size 2 || die "Motion segmentation inference failed."
 
 
 python core/utils/run_inference.py \
@@ -53,7 +53,7 @@ python core/utils/run_inference.py \
   --motin_seg_dir 'data/moseg_output' \
   --gpus 0 1 2 3 \
   --sam2 \
-  --step 8 \
+  --step 16 \
   --e || die "SAM2 inference failed."
 
 echo -e "${YELLOW}✅ All inference steps completed successfully.${NC}"

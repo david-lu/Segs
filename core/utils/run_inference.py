@@ -181,6 +181,7 @@ def main(
                     f"--image_dir {img_dir} "
                     f"--out_dir {track_dir} "
                     f"--step {args.step} "
+                    f"--grid_size {args.grid_size} "
                     f"--ckpt_dir {current_work_dir}/preproc/checkpoints "
                 )
                 exe.submit(subprocess.run, cmd, shell=True)
@@ -238,7 +239,8 @@ if __name__ == "__main__":
     parser.add_argument('--gpus', nargs='+', type=int, default=[0], help='GPU ID')
     parser.add_argument('--track_model', type=str, default="bootstapir")
     parser.add_argument("--e", action='store_true',help="efficiency mode")
-    parser.add_argument('--step', type=int,default=10)    
+    parser.add_argument('--step', type=int,default=10)
+    parser.add_argument('--grid_size', type=int, default=20)
     # data process
     parser.add_argument("--depths", action='store_true')
     parser.add_argument("--tracks", action='store_true')

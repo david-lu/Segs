@@ -6,3 +6,4 @@ data/
 models/
 preproc/checkpoints/
 sam2/checkpoints/
+sam2/build

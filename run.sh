@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+start=$(date +%s)
+
+
 # === Colors ===
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -38,7 +41,9 @@ python core/utils/run_inference.py \
   --config_file 'configs/example_train.yaml' \
   --gpus 0 1 2 3 \
   --motion_seg_infer \
-  --e || die "Motion segmentation inference failed."
+  --e || die "Motion segmentation inference failed." \
+  --step 2 \
+  --grid_size 64
 
 python core/utils/run_inference.py \
   --video_path "$input_video" \
@@ -49,3 +54,6 @@ python core/utils/run_inference.py \
   --e || die "SAM2 inference failed."
 
 echo -e "${YELLOW}✅ All inference steps completed successfully.${NC}"
+
+end=$(date +%s)
+echo "Elapsed time: $((end - start)) seconds"
